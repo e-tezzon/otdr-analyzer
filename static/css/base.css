@@ -1,0 +1,106 @@
+/* Variáveis e base ---------------------------------------------- */
+:root {
+  --tinta: #12263a;
+  --papel: #f3f5f7;
+  --superficie: #ffffff;
+  --fibra: #f2b705;
+  --falha: #c8382b;
+  --falha-claro: #fbeceb;
+  --ok: #1f7a6b;
+  --ok-claro: #e4f3ef;
+  --linha: #d8dee4;
+  --suave: #5b6b7b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.25rem; }
+main.wrap { margin: 1.75rem auto 3rem; }
+
+/* Animações compartilhadas -------------------------------------- */
+@keyframes subir {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes luz {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(340%); }
+}
+
+/* Cabeçalho ------------------------------------------------------ */
+header {
+  position: relative;
+  overflow: hidden;
+  background: var(--tinta);
+  color: #fff;
+  padding: 2.5rem 0;
+}
+header::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 6px;
+  background: var(--fibra);
+}
+header::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 30%;
+  height: 6px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  animation: luz 3.2s linear infinite;
+}
+header h1 {
+  margin: 0 0 .35rem;
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
+  letter-spacing: -.02em;
+  animation: subir .6s both;
+}
+header p { margin: 0; color: #c5d2de; max-width: 58ch; animation: subir .6s .1s both; }
+
+/* Botão de navegação -------------------------------------------- */
+.botao {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: .7rem 1.2rem;
+  background: var(--fibra);
+  color: var(--tinta);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: transform .15s ease, background .15s ease;
+  animation: subir .6s .2s both;
+}
+.botao:hover { background: #ffc61a; transform: translateY(-2px); }
+.botao:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Cartão e tabela ------------------------------------------------ */
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  padding: 1.4rem;
+  min-width: 0;
+  animation: subir .6s both;
+}
+.card h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .65rem .5rem; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+th { color: var(--suave); font-weight: 600; font-size: .9rem; }
+
+.vazio { color: var(--suave); margin: 0; }
+
+/* Respeita quem prefere menos movimento -------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

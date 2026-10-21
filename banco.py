@@ -1,3 +1,4 @@
+from datetime import datetime
 import sqlite3
 
 CAMINHO_BANCO = "otdr.db"
@@ -35,6 +36,39 @@ def criar_tabelas():
         """)
 
 
+def salvar_leitura(nome_arquivo, limites, eventos, problemas):
+    with conectar() as conexao:
+        cursor = conexao.execute(
+            "INSERT INTO leituras (nome_arquivo, data_analise, limite_emenda, "
+            "limite_conector, total_eventos, total_problemas) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (
+                nome_arquivo,
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                limites["emenda"],
+                limites["conector"],
+                len(eventos),
+                len(problemas),
+            ),
+        )
+        leitura_id = cursor.lastrowid
+        conexao.executemany(
+            "INSERT INTO eventos (leitura_id, distancia_km, tipo, perda_db, reflectancia_db) "
+            "VALUES (?, ?, ?, ?, ?)",
+            [
+                (leitura_id, e["distancia_km"], e["tipo"], e["perda_db"], e["reflectancia_db"])
+                for e in eventos
+            ],
+        )
+    return leitura_id
+
+
+def listar_leituras():
+    with conectar() as conexao:
+        return conexao.execute(
+            "SELECT * FROM leituras ORDER BY id DESC"
+        ).fetchall()
+        
 if __name__ == "__main__":
     criar_tabelas()
     with conectar() as conexao:

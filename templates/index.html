@@ -1,204 +1,31 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OTDR Analyzer</title>
-  <style>
-    :root {
-      --tinta: #12263a;
-      --papel: #f3f5f7;
-      --superficie: #ffffff;
-      --fibra: #f2b705;
-      --falha: #c8382b;
-      --ok: #1f7a6b;
-      --linha: #d8dee4;
-      --suave: #5b6b7b;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--papel);
-      color: var(--tinta);
-      font-family: "Segoe UI", system-ui, sans-serif;
-      line-height: 1.5;
-    }
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.25rem; }
+{% extends "base.html" %}
 
-    header {
-      background: var(--tinta);
-      color: #fff;
-      padding: 2.5rem 0 2.25rem;
-      border-bottom: 6px solid var(--fibra);
-    }
-    header h1 {
-      margin: 0 0 .35rem;
-      font-size: clamp(1.9rem, 4vw, 2.7rem);
-      letter-spacing: -.02em;
-    }
-    header p { margin: 0; color: #c5d2de; max-width: 58ch; }
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/analise.css') }}">
+{% endblock %}
 
-    main {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 1.5rem;
-      margin: 1.75rem auto 3rem;
-      align-items: start;
-    }
-    .card {
-      background: var(--superficie);
-      border: 1px solid var(--linha);
-      border-radius: 10px;
-      padding: 1.4rem;
-    }
-    .card h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+{% block subtitulo %}
+  <p>Envie os eventos de uma medição e veja quais emendas e conectores passam do limite de perda.</p>
+{% endblock %}
 
-    form { display: grid; gap: 1.1rem; }
-    label { display: grid; gap: .3rem; font-weight: 600; font-size: .95rem; }
-    label small { font-weight: 400; color: var(--suave); }
-    input[type="number"], input[type="file"] {
-      font: inherit;
-      padding: .55rem .65rem;
-      border: 1px solid var(--linha);
-      border-radius: 6px;
-      background: var(--papel);
-      width: 100%;
-    }
-    input:focus-visible, button:focus-visible {
-      outline: 3px solid var(--fibra);
-      outline-offset: 2px;
-    }
-    button {
-      font: inherit;
-      font-weight: 700;
-      background: var(--fibra);
-      color: var(--tinta);
-      border: 0;
-      border-radius: 6px;
-      padding: .75rem 1rem;
-      cursor: pointer;
-    }
-    button:hover { background: #ffc61a; }
+{% block acao %}
+  <a class="botao" href="{{ url_for('historico') }}">Ver histórico de leituras</a>
+{% endblock %}
 
-    .erro {
-      background: #fbeceb;
-      border-left: 4px solid var(--falha);
-      color: #7a1f17;
-      padding: .75rem 1rem;
-      border-radius: 6px;
-      margin: 0 0 1rem;
-    }
-    .vazio { color: var(--suave); margin: 0; }
-    .situacao { font-size: 1.35rem; font-weight: 700; margin: 0 0 .25rem; }
-    .situacao.ok { color: var(--ok); }
-    .situacao.alerta { color: var(--falha); }
-    .detalhe { margin: 0 0 1.25rem; color: var(--suave); }
-
-    svg { width: 100%; height: auto; display: block; margin-bottom: 1.5rem; }
-    .trilho { stroke: var(--fibra); stroke-width: 6; stroke-linecap: round; }
-    .haste { stroke: var(--falha); stroke-width: 2; }
-    .ponto { fill: var(--tinta); }
-    .ponto-ruim { fill: var(--falha); }
-    .rotulo-ruim { fill: var(--falha); font-size: 13px; font-weight: 700; }
-    .rotulo { fill: var(--suave); font-size: 12px; }
-
-    .tabela { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-    th, td { text-align: left; padding: .6rem .5rem; border-bottom: 1px solid var(--linha); white-space: nowrap; }
-    th { color: var(--suave); font-weight: 600; font-size: .9rem; }
-    td.excesso { color: var(--falha); font-weight: 700; }
-
-    @media (max-width: 820px) {
-      main { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="wrap">
-      <h1>OTDR Analyzer</h1>
-      <p>Envie os eventos de uma medição e veja quais emendas e conectores passam do limite de perda.</p>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="card">
-      <h2>Dados da medição</h2>
-      <form method="post" enctype="multipart/form-data">
-        <label>Arquivo CSV de eventos
-          <input type="file" name="arquivo" accept=".csv" required>
-        </label>
-        <label>Limite da emenda <small>perda máxima em dB</small>
-          <input type="number" step="0.01" name="limite_emenda" value="{{ limites.emenda }}" required>
-        </label>
-        <label>Limite do conector <small>perda máxima em dB</small>
-          <input type="number" step="0.01" name="limite_conector" value="{{ limites.conector }}" required>
-        </label>
-        <button type="submit">Analisar medição</button>
-      </form>
-    </section>
-
-    <section class="card">
-      <h2>Resultado</h2>
-
-      {% if erro %}
-        <p class="erro">{{ erro }}</p>
-      {% endif %}
-
-      {% if resultado %}
-        {% if resultado.problemas %}
-          <p class="situacao alerta">{{ resultado.problemas|length }} de {{ resultado.total }} eventos passam do limite</p>
-          <p class="detalhe">Os pontos em vermelho mostram onde estão na fibra.</p>
-        {% else %}
-          <p class="situacao ok">Nenhum evento passa do limite</p>
-          <p class="detalhe">{{ resultado.total }} eventos analisados.</p>
-        {% endif %}
-
-        {% set total_km = [resultado.eventos|map(attribute='distancia_km')|max, 0.1]|max %}
-        <svg viewBox="0 0 720 130" role="img" aria-label="Eventos ao longo da fibra">
-          <line class="trilho" x1="30" y1="70" x2="690" y2="70"/>
-          {% for e in resultado.eventos %}
-            {% set x = 30 + (e.distancia_km / total_km) * 660 %}
-            {% set lim = limites.get(e.tipo) %}
-            {% set ruim = lim is not none and e.perda_db > lim %}
-            {% if ruim %}
-              <line class="haste" x1="{{ '%.1f'|format(x) }}" y1="70" x2="{{ '%.1f'|format(x) }}" y2="40"/>
-              <circle class="ponto-ruim" cx="{{ '%.1f'|format(x) }}" cy="70" r="9"/>
-              <text class="rotulo-ruim" x="{{ '%.1f'|format(x) }}" y="30" text-anchor="middle">{{ e.distancia_km }} km</text>
-            {% else %}
-              <circle class="ponto" cx="{{ '%.1f'|format(x) }}" cy="70" r="5"/>
-            {% endif %}
-          {% endfor %}
-          <text class="rotulo" x="30" y="112">0 km</text>
-          <text class="rotulo" x="690" y="112" text-anchor="end">{{ total_km }} km</text>
-        </svg>
-
-        {% if resultado.problemas %}
-          <div class="tabela">
-            <table>
-              <tr>
-                <th>Distância (km)</th>
-                <th>Tipo</th>
-                <th>Perda (dB)</th>
-                <th>Limite (dB)</th>
-                <th>Excesso (dB)</th>
-              </tr>
-              {% for p in resultado.problemas %}
-              <tr>
-                <td>{{ p.distancia_km }}</td>
-                <td>{{ p.tipo }}</td>
-                <td>{{ p.perda_db }}</td>
-                <td>{{ limites[p.tipo] }}</td>
-                <td class="excesso">+{{ '%.2f'|format(p.perda_db - limites[p.tipo]) }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-          </div>
-        {% endif %}
-      {% elif not erro %}
-        <p class="vazio">Envie um arquivo CSV para ver a fibra e os eventos fora do limite aqui.</p>
-      {% endif %}
-    </section>
+{% block conteudo %}
+  <main class="wrap layout">
+    {% include "parciais/formulario.html" %}
+    {% include "parciais/resultado.html" %}
   </main>
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+  {% if resultado %}
+    <script id="dados-medicao" type="application/json">{{ {"eventos": resultado.eventos, "limites": limites}|tojson }}</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  {% endif %}
+  <script src="{{ url_for('static', filename='js/animacoes.js') }}"></script>
+  {% if resultado %}
+    <script src="{{ url_for('static', filename='js/grafico.js') }}"></script>
+  {% endif %}
+{% endblock %}

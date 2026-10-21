@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}OTDR Analyzer{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  {% block estilos %}{% endblock %}
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>{% block h1 %}OTDR Analyzer{% endblock %}</h1>
+      {% block subtitulo %}{% endblock %}
+      {% block acao %}{% endblock %}
+    </div>
+  </header>
+
+  {% block conteudo %}{% endblock %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block titulo %}Histórico | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/historico.css') }}">
+{% endblock %}
+
+{% block h1 %}Histórico de leituras{% endblock %}
+
+{% block acao %}
+  <a class="botao" href="{{ url_for('inicio') }}">← Nova análise</a>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card historico">
+      {% if leituras %}
+        <table>
+          <tr>
+            <th>Data</th>
+            <th>Arquivo</th>
+            <th>Eventos</th>
+            <th>Fora do limite</th>
+            <th>Limite emenda (dB)</th>
+            <th>Limite conector (dB)</th>
+          </tr>
+          {% for l in leituras %}
+          <tr>
+            <td>{{ l.data_analise }}</td>
+            <td>{{ l.nome_arquivo }}</td>
+            <td>{{ l.total_eventos }}</td>
+            <td class="{{ 'ruim' if l.total_problemas > 0 else 'bom' }}">{{ l.total_problemas }}</td>
+            <td>{{ l.limite_emenda }}</td>
+            <td>{{ l.limite_conector }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <p class="vazio">Nenhuma leitura salva ainda. Faça uma análise na página inicial.</p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

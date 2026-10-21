@@ -1,0 +1,15 @@
+<section class="card">
+  <h2>Dados da medição</h2>
+  <form method="post" enctype="multipart/form-data">
+    <label>Arquivo CSV de eventos
+      <input type="file" name="arquivo" accept=".csv" required>
+    </label>
+    <label>Limite da emenda <small>perda máxima em dB</small>
+      <input type="number" step="0.01" name="limite_emenda" value="{{ limites.emenda }}" required>
+    </label>
+    <label>Limite do conector <small>perda máxima em dB</small>
+      <input type="number" step="0.01" name="limite_conector" value="{{ limites.conector }}" required>
+    </label>
+    <button type="submit">Analisar medição</button>
+  </form>
+</section>

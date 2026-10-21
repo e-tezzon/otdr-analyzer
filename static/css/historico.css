@@ -1,0 +1,3 @@
+.historico { overflow-x: auto; }
+.ruim { color: var(--falha); font-weight: 700; }
+.bom { color: var(--ok); font-weight: 700; }

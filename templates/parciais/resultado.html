@@ -1,0 +1,87 @@
+<section class="card">
+  <h2>Resultado</h2>
+
+  {% if erro %}
+    <p class="erro">{{ erro }}</p>
+  {% endif %}
+
+  {% if resultado %}
+    {% set ns = namespace(pior=0) %}
+    {% for p in resultado.problemas %}
+      {% set ex = p.perda_db - limites[p.tipo] %}
+      {% if ex > ns.pior %}{% set ns.pior = ex %}{% endif %}
+    {% endfor %}
+
+    {% if resultado.problemas %}
+      <div class="banner alerta">
+        <div class="icone">✕</div>
+        <div>
+          <strong>MEDIÇÃO REPROVADA</strong>
+          <span class="sub">{{ resultado.problemas|length }} evento(s) acima do limite de perda</span>
+        </div>
+      </div>
+    {% else %}
+      <div class="banner ok">
+        <div class="icone">✓</div>
+        <div>
+          <strong>MEDIÇÃO APROVADA</strong>
+          <span class="sub">Nenhum evento acima do limite de perda</span>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="numeros">
+      <div class="numero">
+        <small>Eventos analisados</small>
+        <b data-alvo="{{ resultado.total }}">{{ resultado.total }}</b>
+      </div>
+      <div class="numero {{ 'ruim' if resultado.problemas else '' }}">
+        <small>Fora do limite</small>
+        <b data-alvo="{{ resultado.problemas|length }}">{{ resultado.problemas|length }}</b>
+      </div>
+      <div class="numero {{ 'ruim' if resultado.problemas else '' }}">
+        <small>Maior excesso</small>
+        <b>+<span data-alvo="{{ '%.2f'|format(ns.pior) }}" data-casas="2">{{ '%.2f'|format(ns.pior) }}</span> dB</b>
+      </div>
+    </div>
+
+    <h3 class="titulo-grafico">Curva de sinal ao longo da fibra</h3>
+    <div class="grafico">
+      <canvas id="grafico" role="img" aria-label="Curva de perda de sinal por distância, com um ponto em cada evento"></canvas>
+    </div>
+    <ul class="legenda">
+      <li><span class="bola normal"></span>Dentro do limite</li>
+      <li><span class="bola ruim"></span>Fora do limite</li>
+      <li>Passe o mouse sobre um ponto para ver o detalhe</li>
+    </ul>
+
+    {% if resultado.problemas %}
+      <div class="tabela">
+        <table>
+          <tr>
+            <th>Distância (km)</th>
+            <th>Tipo</th>
+            <th>Perda (dB)</th>
+            <th>Limite (dB)</th>
+            <th>Excesso (dB)</th>
+          </tr>
+          {% for p in resultado.problemas %}
+          {% set ex = p.perda_db - limites[p.tipo] %}
+          <tr class="linha-falha" data-km="{{ p.distancia_km }}" style="--i: {{ loop.index0 }}">
+            <td>{{ p.distancia_km }}</td>
+            <td><span class="etiqueta">{{ p.tipo }}</span></td>
+            <td>{{ p.perda_db }}</td>
+            <td>{{ limites[p.tipo] }}</td>
+            <td class="excesso">
+              +{{ '%.2f'|format(ex) }}
+              <span class="barra"><i data-largura="{{ ((ex / ns.pior) * 100)|round|int }}"></i></span>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+  {% elif not erro %}
+    <p class="vazio">Envie um arquivo CSV para ver a curva de sinal e os eventos fora do limite aqui.</p>
+  {% endif %}
+</section>
