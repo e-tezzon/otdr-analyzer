@@ -8,18 +8,22 @@ LIMITES_PERDA_DB = {
 }
 
 
-def ler_eventos(caminho):
+def ler_eventos_de_linhas(linhas):
     eventos = []
-    with open(caminho, newline="", encoding="utf-8") as arquivo:
-        leitor = csv.DictReader(arquivo)
-        for linha in leitor:
-            eventos.append({
-                "distancia_km": float(linha["distancia_km"]),
-                "tipo": linha["tipo"],
-                "perda_db": float(linha["perda_db"]),
-                "reflectancia_db": float(linha["reflectancia_db"]),
-            })
+    leitor = csv.DictReader(linhas)
+    for linha in leitor:
+        eventos.append({
+            "distancia_km": float(linha["distancia_km"]),
+            "tipo": linha["tipo"],
+            "perda_db": float(linha["perda_db"]),
+            "reflectancia_db": float(linha["reflectancia_db"]),
+        })
     return eventos
+
+
+def ler_eventos(caminho):
+    with open(caminho, newline="", encoding="utf-8") as arquivo:
+        return ler_eventos_de_linhas(arquivo)
 
 
 def encontrar_problemas(eventos, limites):
