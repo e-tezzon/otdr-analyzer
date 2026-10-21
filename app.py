@@ -21,7 +21,7 @@ def inicio():
             linhas = arquivo.stream.read().decode("utf-8").splitlines()
             eventos = ler_eventos_de_linhas(linhas)
             problemas = encontrar_problemas(eventos, limites)
-            resultado = {"total": len(eventos), "problemas": problemas}
+            resultado = {"total": len(eventos), "problemas": problemas, "eventos": eventos}
         except (KeyError, ValueError, UnicodeDecodeError):
             erro = "Não foi possível ler o arquivo. Use um CSV com as colunas distancia_km, tipo, perda_db e reflectancia_db."
 
