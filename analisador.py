@@ -31,6 +31,19 @@ def encontrar_problemas(eventos, limites):
     return problemas
 
 
+def salvar_relatorio(problemas, limites, caminho):
+    with open(caminho, "w", newline="", encoding="utf-8") as arquivo:
+        escritor = csv.writer(arquivo)
+        escritor.writerow(["distancia_km", "tipo", "perda_db", "limite_db"])
+        for p in problemas:
+            escritor.writerow([
+                p["distancia_km"],
+                p["tipo"],
+                p["perda_db"],
+                limites[p["tipo"]],
+            ])
+
+
 if __name__ == "__main__":
     eventos = ler_eventos("eventos.csv")
     problemas = encontrar_problemas(eventos, LIMITES_PERDA_DB)
@@ -40,3 +53,6 @@ if __name__ == "__main__":
     for p in problemas:
         limite = LIMITES_PERDA_DB[p["tipo"]]
         print(f"- {p['distancia_km']} km | {p['tipo']} | perda {p['perda_db']} dB (limite {limite} dB)")
+
+    salvar_relatorio(problemas, LIMITES_PERDA_DB, "relatorio.csv")
+    print("Relatório salvo em relatorio.csv")
