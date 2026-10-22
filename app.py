@@ -5,7 +5,11 @@ from conta import conta_bp
 from flask import (
     Flask, abort, flash, redirect, render_template, request, session, url_for,
 )
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
+from limite_login import (
+    autenticar_com_limite,
+    preparar_controle_login
+)
 
 import config
 from analisador import LIMITES_PERDA_DB, encontrar_problemas, ler_eventos_de_linhas
@@ -37,6 +41,7 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
 )
 criar_tabelas()
+preparar_controle_login()
 app.register_blueprint(admin_bp)
 app.register_blueprint(conta_bp)
 
@@ -71,6 +76,7 @@ def inicio():
     return redirect(url_for("login"))
 
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if usuario_atual() is not None:
@@ -83,22 +89,47 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         senha = request.form.get("senha", "")
+
         registro = buscar_usuario_por_email(email)
 
-        hash_guardado = registro["senha_hash"] if registro else HASH_FALSO
-        senha_ok = check_password_hash(hash_guardado, senha)
+        # Verifica senha e bloqueio progressivo
+        situacao, espera = autenticar_com_limite(
+            email,
+            senha,
+            registro,
+            HASH_FALSO
+        )
 
-        if registro is None or not senha_ok:
+        if situacao == "bloqueado":
+            erro = (
+                f"Conta temporariamente bloqueada. "
+                f"Tente novamente em {espera} minuto(s)."
+            )
+
+        elif situacao == "invalido":
             erro = "E-mail ou senha incorretos."
-        elif not registro["email_confirmado"]:
-            erro = "Confirme seu e-mail antes de entrar. Procure a mensagem que enviamos para a sua caixa de entrada."
+
+        elif situacao == "pendente":
+            erro = (
+                "Confirme seu e-mail antes de entrar. "
+                "Procure a mensagem que enviamos "
+                "para a sua caixa de entrada."
+            )
             pendente = True
-        else:
+
+        elif situacao == "ok":
             session.clear()
             session["usuario_id"] = registro["id"]
+
             return redirect(url_for("analise"))
 
-    return render_template("login.html", erro=erro, pendente=pendente, email=email)
+    return render_template(
+        "login.html",
+        erro=erro,
+        pendente=pendente,
+        email=email
+    )
+
 
 
 @app.route("/sair", methods=["POST"])
@@ -239,4 +270,4 @@ def leitura(leitura_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
