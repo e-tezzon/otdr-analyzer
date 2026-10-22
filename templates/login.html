@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %}Entrar | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+{% endblock %}
+
+{% block subtitulo %}
+  <p>Entre para analisar medições e consultar seu histórico de leituras.</p>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card conta">
+      <h2>Entrar</h2>
+
+      {% if erro %}
+        <p class="aviso-erro">{{ erro }}</p>
+        {% if pendente %}
+          <p><a href="{{ url_for('reenviar') }}">Reenviar e-mail de confirmação</a></p>
+        {% endif %}
+      {% endif %}
+
+      <form method="post">
+        <label>E-mail
+          <input type="email" name="email" value="{{ email }}" autocomplete="email" required autofocus>
+        </label>
+        <label>Senha
+          <input type="password" name="senha" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Entrar</button>
+      </form>
+
+      <p class="alternativa">Ainda não tem conta?</p>
+      <a class="botao-secundario" href="{{ url_for('cadastro') }}">Cadastre-se</a>
+    </section>
+  </main>
+{% endblock %}

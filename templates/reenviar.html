@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Reenviar confirmação | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+{% endblock %}
+
+{% block h1 %}Reenviar confirmação{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card conta">
+      {% if enviado %}
+        <div class="aviso-ok">
+          <strong>Pedido recebido.</strong>
+          Se existir uma conta pendente com esse e-mail, enviamos um novo link de confirmação.
+        </div>
+        <p><a href="{{ url_for('login') }}">Voltar ao login</a></p>
+      {% else %}
+        <form method="post">
+          <label>E-mail da conta
+            <input type="email" name="email" autocomplete="email" required autofocus>
+          </label>
+          <button type="submit">Enviar novo link</button>
+        </form>
+        <p><a href="{{ url_for('login') }}">Voltar ao login</a></p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

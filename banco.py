@@ -1,17 +1,30 @@
+
 import sqlite3
 from datetime import datetime
+
+
+# ==========================================
+# CONFIGURAÇÃO DO BANCO DE DADOS
+# ==========================================
 
 CAMINHO_BANCO = "otdr.db"
 
 
 def conectar():
+    """Cria uma conexão com o banco SQLite."""
     conexao = sqlite3.connect(CAMINHO_BANCO)
     conexao.row_factory = sqlite3.Row
     conexao.execute("PRAGMA foreign_keys = ON")
     return conexao
 
 
+# ==========================================
+# CRIAÇÃO E MIGRAÇÃO DAS TABELAS
+# ==========================================
+
 def criar_tabelas():
+    """Cria as tabelas necessárias ao sistema."""
+
     with conectar() as conexao:
         conexao.executescript("""
             CREATE TABLE IF NOT EXISTS usuarios (
@@ -40,55 +53,188 @@ def criar_tabelas():
                 tipo TEXT NOT NULL,
                 perda_db REAL NOT NULL,
                 reflectancia_db REAL NOT NULL,
-                FOREIGN KEY (leitura_id) REFERENCES leituras (id) ON DELETE CASCADE
+                FOREIGN KEY (leitura_id)
+                    REFERENCES leituras (id)
+                    ON DELETE CASCADE
             );
         """)
+
         migrar_leituras(conexao)
 
 
 def migrar_leituras(conexao):
-    # Bancos criados antes do login não têm a coluna usuario_id
-    colunas = [c["name"] for c in conexao.execute("PRAGMA table_info(leituras)")]
-    if "usuario_id" not in colunas:
-        conexao.execute(
-            "ALTER TABLE leituras ADD COLUMN usuario_id INTEGER REFERENCES usuarios (id)"
+    """
+    Atualiza bancos antigos, adicionando usuario_id
+    quando a coluna ainda não existir.
+    """
+
+    colunas = [
+        coluna["name"]
+        for coluna in conexao.execute(
+            "PRAGMA table_info(leituras)"
         )
+    ]
+
+    if "usuario_id" not in colunas:
+        conexao.execute("""
+            ALTER TABLE leituras
+            ADD COLUMN usuario_id INTEGER
+            REFERENCES usuarios (id)
+        """)
 
 
-# ---------- usuários ----------
+# ==========================================
+# GERENCIAMENTO DE USUÁRIOS
+# ==========================================
 
 def criar_usuario(nome, email, senha_hash):
-    """Cria o usuário. Se o e-mail já existir, levanta sqlite3.IntegrityError."""
+    """
+    Cadastra um novo usuário.
+    O e-mail deve ser único.
+    """
+
+    email = email.strip().lower()
+
     with conectar() as conexao:
         cursor = conexao.execute(
-            "INSERT INTO usuarios (nome, email, senha_hash, criado_em) VALUES (?, ?, ?, ?)",
-            (nome, email.strip().lower(), senha_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            """
+            INSERT INTO usuarios (
+                nome,
+                email,
+                senha_hash,
+                criado_em
+            )
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                nome,
+                email,
+                senha_hash,
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            )
         )
+
         return cursor.lastrowid
 
 
 def buscar_usuario_por_email(email):
+    """Busca um usuário pelo e-mail."""
+
+    email = email.strip().lower()
+
     with conectar() as conexao:
         return conexao.execute(
-            "SELECT * FROM usuarios WHERE email = ?", (email.strip().lower(),)
+            """
+            SELECT *
+            FROM usuarios
+            WHERE email = ?
+            """,
+            (email,)
         ).fetchone()
 
 
 def buscar_usuario_por_id(usuario_id):
+    """Busca um usuário pelo ID."""
+
     with conectar() as conexao:
         return conexao.execute(
-            "SELECT * FROM usuarios WHERE id = ?", (usuario_id,)
+            """
+            SELECT *
+            FROM usuarios
+            WHERE id = ?
+            """,
+            (usuario_id,)
         ).fetchone()
 
 
-# ---------- leituras ----------
+def confirmar_email(usuario_id):
+    """Marca o e-mail do usuário como confirmado."""
 
-def salvar_leitura(nome_arquivo, limites, eventos, problemas, usuario_id=None):
     with conectar() as conexao:
+        conexao.execute(
+            """
+            UPDATE usuarios
+            SET email_confirmado = 1
+            WHERE id = ?
+            """,
+            (usuario_id,)
+        )
+
+
+def atualizar_senha(usuario_id, senha_hash):
+    """Atualiza o hash da senha de um usuário."""
+
+    with conectar() as conexao:
+        conexao.execute(
+            """
+            UPDATE usuarios
+            SET senha_hash = ?
+            WHERE id = ?
+            """,
+            (senha_hash, usuario_id)
+        )
+
+
+def listar_usuarios():
+    """
+    Retorna usuários e quantidade de leituras.
+    Não retorna hashes de senhas.
+    """
+
+    with conectar() as conexao:
+        return conexao.execute(
+            """
+            SELECT
+                u.id,
+                u.nome,
+                u.email,
+                u.email_confirmado,
+                u.criado_em,
+                COUNT(l.id) AS total_leituras
+
+            FROM usuarios u
+
+            LEFT JOIN leituras l
+                ON l.usuario_id = u.id
+
+            GROUP BY u.id
+
+            ORDER BY u.id DESC
+            """
+        ).fetchall()
+
+
+# ==========================================
+# GERENCIAMENTO DE LEITURAS OTDR
+# ==========================================
+
+def salvar_leitura(
+    nome_arquivo,
+    limites,
+    eventos,
+    problemas,
+    usuario_id
+):
+    """
+    Salva uma análise OTDR e seus eventos.
+    Relaciona a leitura ao usuário autenticado.
+    """
+
+    with conectar() as conexao:
+
         cursor = conexao.execute(
-            "INSERT INTO leituras (nome_arquivo, data_analise, limite_emenda, "
-            "limite_conector, total_eventos, total_problemas, usuario_id) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            """
+            INSERT INTO leituras (
+                nome_arquivo,
+                data_analise,
+                limite_emenda,
+                limite_conector,
+                total_eventos,
+                total_problemas,
+                usuario_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
             (
                 nome_arquivo,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -96,50 +242,118 @@ def salvar_leitura(nome_arquivo, limites, eventos, problemas, usuario_id=None):
                 limites["conector"],
                 len(eventos),
                 len(problemas),
-                usuario_id,
-            ),
+                usuario_id
+            )
         )
+
         leitura_id = cursor.lastrowid
+
+        dados_eventos = [
+            (
+                leitura_id,
+                evento["distancia_km"],
+                evento["tipo"],
+                evento["perda_db"],
+                evento["reflectancia_db"]
+            )
+            for evento in eventos
+        ]
+
         conexao.executemany(
-            "INSERT INTO eventos (leitura_id, distancia_km, tipo, perda_db, reflectancia_db) "
-            "VALUES (?, ?, ?, ?, ?)",
-            [
-                (leitura_id, e["distancia_km"], e["tipo"], e["perda_db"], e["reflectancia_db"])
-                for e in eventos
-            ],
+            """
+            INSERT INTO eventos (
+                leitura_id,
+                distancia_km,
+                tipo,
+                perda_db,
+                reflectancia_db
+            )
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            dados_eventos
         )
+
     return leitura_id
 
 
-def listar_leituras():
+def listar_leituras(usuario_id):
+    """
+    Lista o histórico de análises de um usuário.
+    """
+
     with conectar() as conexao:
         return conexao.execute(
-            "SELECT * FROM leituras ORDER BY id DESC"
+            """
+            SELECT *
+            FROM leituras
+            WHERE usuario_id = ?
+            ORDER BY id DESC
+            """,
+            (usuario_id,)
         ).fetchall()
 
 
-def buscar_leitura(leitura_id):
+def buscar_leitura(leitura_id, usuario_id):
+    """
+    Busca uma leitura e seus eventos.
+    Somente permite acessar leituras do próprio usuário.
+    """
+
     with conectar() as conexao:
+
         leitura = conexao.execute(
-            "SELECT * FROM leituras WHERE id = ?", (leitura_id,)
+            """
+            SELECT *
+            FROM leituras
+            WHERE id = ?
+              AND usuario_id = ?
+            """,
+            (leitura_id, usuario_id)
         ).fetchone()
+
         if leitura is None:
             return None, []
-        eventos = conexao.execute(
-            "SELECT distancia_km, tipo, perda_db, reflectancia_db "
-            "FROM eventos WHERE leitura_id = ? ORDER BY distancia_km, id",
-            (leitura_id,),
-        ).fetchall()
-    return leitura, [dict(e) for e in eventos]
 
+        eventos = conexao.execute(
+            """
+            SELECT
+                distancia_km,
+                tipo,
+                perda_db,
+                reflectancia_db
+
+            FROM eventos
+
+            WHERE leitura_id = ?
+
+            ORDER BY distancia_km, id
+            """,
+            (leitura_id,)
+        ).fetchall()
+
+    return leitura, [dict(evento) for evento in eventos]
+
+
+# ==========================================
+# EXECUÇÃO DIRETA / TESTE DO BANCO
+# ==========================================
 
 if __name__ == "__main__":
+
     criar_tabelas()
+
     with conectar() as conexao:
         tabelas = conexao.execute(
-            "SELECT name FROM sqlite_master "
-            "WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+            """
+            SELECT name
+            FROM sqlite_master
+            WHERE type = 'table'
+              AND name NOT LIKE 'sqlite_%'
+            """
         ).fetchall()
-        colunas = conexao.execute("PRAGMA table_info(leituras)").fetchall()
-    print("Tabelas:", [t["name"] for t in tabelas])
-    print("Colunas de leituras:", [c["name"] for c in colunas])
+
+    print("Banco de dados inicializado.")
+    print("Tabelas encontradas:")
+
+    for tabela in tabelas:
+        print("-", tabela["name"])

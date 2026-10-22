@@ -1,0 +1,66 @@
+.conta { max-width: 480px; margin: 0 auto; }
+.conta form { display: grid; gap: 1.1rem; }
+.conta label { display: grid; gap: .3rem; font-weight: 600; font-size: .95rem; }
+.conta label small { font-weight: 400; color: var(--suave); }
+
+.conta input {
+  font: inherit;
+  padding: .6rem .7rem;
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  background: var(--papel);
+  width: 100%;
+  transition: border-color .15s ease;
+}
+.conta input:hover { border-color: var(--fibra); }
+.conta input:focus-visible, .conta button:focus-visible { outline: 3px solid var(--fibra); outline-offset: 2px; }
+.conta input.invalido { border-color: var(--falha); background: var(--falha-claro); }
+
+.msg-erro { color: var(--falha); font-weight: 400; font-size: .9rem; }
+
+.conta button {
+  font: inherit;
+  font-weight: 700;
+  background: var(--fibra);
+  color: var(--tinta);
+  border: 0;
+  border-radius: 6px;
+  padding: .75rem 1rem;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.conta button:hover { background: #ffc61a; transform: translateY(-2px); }
+
+.aviso-erro {
+  background: var(--falha-claro);
+  border-left: 4px solid var(--falha);
+  color: #7a1f17;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  margin: 0 0 1rem;
+}
+.aviso-ok {
+  background: var(--ok-claro);
+  border-left: 4px solid var(--ok);
+  color: #134e44;
+  padding: 1rem;
+  border-radius: 6px;
+}
+.aviso-ok strong { display: block; margin-bottom: .25rem; }
+
+.conta h2 { margin-top: 0; }
+.alternativa { margin: 1.5rem 0 .5rem; color: var(--suave); text-align: center; }
+.botao-secundario {
+  display: block;
+  text-align: center;
+  padding: .7rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 6px;
+  color: var(--tinta);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+.botao-secundario:hover { background: var(--tinta); color: #fff; }
+.botao-secundario:focus-visible { outline: 3px solid var(--fibra); outline-offset: 2px; }
+.conta p a { color: var(--tinta); font-weight: 600; }

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block titulo %}Alterar senha | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+{% endblock %}
+
+{% block h1 %}Alterar senha{% endblock %}
+
+{% block subtitulo %}
+  <p>Use uma senha longa e única. Uma frase de 12 caracteres ou mais é melhor do que símbolos difíceis de lembrar.</p>
+{% endblock %}
+
+{% block acao %}
+  <a class="botao" href="{{ url_for('analise') }}">← Voltar à análise</a>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card conta">
+      <form method="post" novalidate>
+        <label>Senha atual
+          <input type="password" name="senha_atual" autocomplete="current-password"
+                 class="{{ 'invalido' if erros.senha_atual }}"
+                 aria-invalid="{{ 'true' if erros.senha_atual else 'false' }}" required autofocus>
+          {% if erros.senha_atual %}<span class="msg-erro">{{ erros.senha_atual }}</span>{% endif %}
+        </label>
+
+        <label>Nova senha <small>mínimo de 12 caracteres</small>
+          <input type="password" name="senha_nova" autocomplete="new-password"
+                 class="{{ 'invalido' if erros.senha_nova }}"
+                 aria-invalid="{{ 'true' if erros.senha_nova else 'false' }}" required>
+          {% if erros.senha_nova %}<span class="msg-erro">{{ erros.senha_nova }}</span>{% endif %}
+        </label>
+
+        <label>Confirmar nova senha
+          <input type="password" name="confirmacao" autocomplete="new-password"
+                 class="{{ 'invalido' if erros.confirmacao }}"
+                 aria-invalid="{{ 'true' if erros.confirmacao else 'false' }}" required>
+          {% if erros.confirmacao %}<span class="msg-erro">{{ erros.confirmacao }}</span>{% endif %}
+        </label>
+
+        <button type="submit">Salvar nova senha</button>
+      </form>
+    </section>
+  </main>
+{% endblock %}

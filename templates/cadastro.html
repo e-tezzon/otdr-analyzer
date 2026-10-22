@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar conta | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+{% endblock %}
+
+{% block h1 %}Criar conta{% endblock %}
+
+{% block subtitulo %}
+  <p>Cadastre-se para guardar e consultar suas leituras.</p>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card conta">
+      {% if sucesso %}
+        <div class="aviso-ok">
+          <strong>Conta criada com sucesso.</strong>
+          Nos próximos passos vamos adicionar o login e a confirmação por e-mail.
+        </div>
+      {% else %}
+        {% if erro_geral %}
+          <p class="aviso-erro">{{ erro_geral }}</p>
+        {% endif %}
+
+        <form method="post" novalidate>
+          <label>Nome
+            <input type="text" name="nome" value="{{ valores.nome }}" autocomplete="name"
+                   class="{{ 'invalido' if erros.nome }}"
+                   aria-invalid="{{ 'true' if erros.nome else 'false' }}" required>
+            {% if erros.nome %}<span class="msg-erro">{{ erros.nome }}</span>{% endif %}
+          </label>
+
+          <label>E-mail
+            <input type="email" name="email" value="{{ valores.email }}" autocomplete="email"
+                   class="{{ 'invalido' if erros.email }}"
+                   aria-invalid="{{ 'true' if erros.email else 'false' }}" required>
+            {% if erros.email %}<span class="msg-erro">{{ erros.email }}</span>{% endif %}
+          </label>
+
+          <label>Senha <small>mínimo de 12 caracteres</small>
+            <input type="password" name="senha" autocomplete="new-password"
+                   class="{{ 'invalido' if erros.senha }}"
+                   aria-invalid="{{ 'true' if erros.senha else 'false' }}" required>
+            {% if erros.senha %}<span class="msg-erro">{{ erros.senha }}</span>{% endif %}
+          </label>
+
+          <label>Confirmar senha
+            <input type="password" name="confirmacao" autocomplete="new-password"
+                   class="{{ 'invalido' if erros.confirmacao }}"
+                   aria-invalid="{{ 'true' if erros.confirmacao else 'false' }}" required>
+            {% if erros.confirmacao %}<span class="msg-erro">{{ erros.confirmacao }}</span>{% endif %}
+          </label>
+
+          <button type="submit">Criar conta</button>
+        </form>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

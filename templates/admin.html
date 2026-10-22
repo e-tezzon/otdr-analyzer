@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block titulo %}Administração | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block h1 %}Painel do administrador{% endblock %}
+
+{% block subtitulo %}
+  <p>Pessoas cadastradas no OTDR Analyzer.</p>
+{% endblock %}
+
+{% block acao %}
+  <a class="botao" href="{{ url_for('analise') }}">← Voltar à análise</a>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    <section class="card">
+      <div class="resumo">
+        <div><small>Cadastros</small><b>{{ resumo.total }}</b></div>
+        <div><small>E-mail confirmado</small><b>{{ resumo.confirmados }}</b></div>
+        <div><small>Aguardando confirmação</small><b>{{ resumo.pendentes }}</b></div>
+      </div>
+
+      {% if usuarios %}
+        <div class="tabela-usuarios">
+          <table>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Situação</th>
+              <th>Cadastro em</th>
+              <th>Leituras</th>
+            </tr>
+            {% for u in usuarios %}
+            <tr>
+              <td>{{ u.nome }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                {% if u.email_confirmado %}
+                  <span class="selo ok">Confirmado</span>
+                {% else %}
+                  <span class="selo pendente">Pendente</span>
+                {% endif %}
+              </td>
+              <td>{{ u.criado_em }}</td>
+              <td>{{ u.total_leituras }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% else %}
+        <p class="vazio">Nenhum usuário cadastrado.</p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}  

@@ -1,0 +1,12 @@
+.resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-bottom: 1.25rem; }
+.resumo div { border: 1px solid var(--linha); border-radius: 8px; padding: .7rem .8rem; }
+.resumo small { display: block; color: var(--suave); font-size: .8rem; }
+.resumo b { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+
+.tabela-usuarios { overflow-x: auto; }
+
+.selo { display: inline-block; padding: .1rem .6rem; border-radius: 999px; font-size: .85rem; font-weight: 700; }
+.selo.ok { background: var(--ok-claro); color: var(--ok); }
+.selo.pendente { background: #fff4cc; color: #7a5b00; }
+
+@media (max-width: 600px) { .resumo { grid-template-columns: 1fr; } }

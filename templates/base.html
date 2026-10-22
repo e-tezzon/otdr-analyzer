@@ -10,11 +10,33 @@
 <body>
   <header>
     <div class="wrap">
+                 {% if usuario %}
+        <div class="barra-usuario">
+          {% if eh_admin %}
+            <a class="link-admin" href="{{ url_for('admin.painel') }}">Administração</a>
+          {% endif %}
+          <span>{{ usuario.nome }}</span>
+          <a class="link-conta" href="{{ url_for('conta.senha') }}">Alterar senha</a>
+          <form method="post" action="{{ url_for('sair') }}">
+            <button type="submit" class="botao-sair">Sair</button>
+          </form>
+        </div>
+      {% endif %}
       <h1>{% block h1 %}OTDR Analyzer{% endblock %}</h1>
       {% block subtitulo %}{% endblock %}
       {% block acao %}{% endblock %}
     </div>
   </header>
+
+  {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% if mensagens %}
+      <div class="wrap mensagens">
+        {% for categoria, texto in mensagens %}
+          <p class="mensagem {{ categoria }}" role="status">{{ texto }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
   {% block conteudo %}{% endblock %}
   {% block scripts %}{% endblock %}
