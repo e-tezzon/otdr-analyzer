@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, abort, render_template, request
 
 from analisador import LIMITES_PERDA_DB, encontrar_problemas, ler_eventos_de_linhas
-from banco import criar_tabelas, listar_leituras, salvar_leitura
+from banco import buscar_leitura, criar_tabelas, listar_leituras, salvar_leitura
 
 app = Flask(__name__)
 criar_tabelas()
@@ -36,5 +36,27 @@ def historico():
     return render_template("historico.html", leituras=listar_leituras())
 
 
+@app.route("/leitura/<int:leitura_id>")
+def leitura(leitura_id):
+    registro, eventos = buscar_leitura(leitura_id)
+    if registro is None:
+        abort(404)
+
+    limites = {
+        "emenda": registro["limite_emenda"],
+        "conector": registro["limite_conector"],
+    }
+    problemas = encontrar_problemas(eventos, limites)
+    resultado = {"total": len(eventos), "problemas": problemas, "eventos": eventos}
+
+    return render_template(
+        "leitura.html",
+        leitura=registro,
+        resultado=resultado,
+        limites=limites,
+        erro=None,
+    )
+
+
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)

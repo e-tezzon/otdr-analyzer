@@ -20,12 +20,5 @@
 {% endblock %}
 
 {% block scripts %}
-  {% if resultado %}
-    <script id="dados-medicao" type="application/json">{{ {"eventos": resultado.eventos, "limites": limites}|tojson }}</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  {% endif %}
-  <script src="{{ url_for('static', filename='js/animacoes.js') }}"></script>
-  {% if resultado %}
-    <script src="{{ url_for('static', filename='js/grafico.js') }}"></script>
-  {% endif %}
+  {% include "parciais/scripts_resultado.html" %}
 {% endblock %}

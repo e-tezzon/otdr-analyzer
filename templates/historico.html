@@ -24,6 +24,7 @@
             <th>Fora do limite</th>
             <th>Limite emenda (dB)</th>
             <th>Limite conector (dB)</th>
+            <th></th>
           </tr>
           {% for l in leituras %}
           <tr>
@@ -33,6 +34,7 @@
             <td class="{{ 'ruim' if l.total_problemas > 0 else 'bom' }}">{{ l.total_problemas }}</td>
             <td>{{ l.limite_emenda }}</td>
             <td>{{ l.limite_conector }}</td>
+            <td><a class="link-abrir" href="{{ url_for('leitura', leitura_id=l.id) }}">Abrir</a></td>
           </tr>
           {% endfor %}
         </table>

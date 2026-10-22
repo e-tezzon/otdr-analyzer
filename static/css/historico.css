@@ -1,3 +1,14 @@
 .historico { overflow-x: auto; }
 .ruim { color: var(--falha); font-weight: 700; }
 .bom { color: var(--ok); font-weight: 700; }
+
+
+.link-abrir {
+  color: var(--tinta);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--fibra);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+.link-abrir:hover { color: var(--falha); }

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titulo %}Leitura #{{ leitura.id }} | OTDR Analyzer{% endblock %}
+
+{% block estilos %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/analise.css') }}">
+{% endblock %}
+
+{% block h1 %}Leitura #{{ leitura.id }}{% endblock %}
+
+{% block subtitulo %}
+  <p>{{ leitura.nome_arquivo }} · analisada em {{ leitura.data_analise }}</p>
+{% endblock %}
+
+{% block acao %}
+  <a class="botao" href="{{ url_for('historico') }}">← Voltar ao histórico</a>
+{% endblock %}
+
+{% block conteudo %}
+  <main class="wrap">
+    {% include "parciais/resultado.html" %}
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  {% include "parciais/scripts_resultado.html" %}
+{% endblock %}
