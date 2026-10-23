@@ -74,24 +74,25 @@ Limitação atual: a aplicação não interpreta diretamente arquivos binários 
 
 Clone o repositório:
 
-git clone https://github.com/e-tezzon/otdr-analyzer.git
+git clone
+https://github.com/e-tezzon/otdr-analyzer.git
 cd otdr-analyzer
 
-Crie um ambiente virtual:
+### Crie um ambiente virtual:
 
 python -m venv .venv
 
-Ative o ambiente:
+## Ative o ambiente:
 
-Windows:
+### Windows:
 
 .venv\Scripts\activate
 
-Linux/macOS:
+### Linux/macOS:
 
 source .venv/bin/activate
 
-Após adicionar e validar o arquivo "requirements.txt", instale as dependências:
+### Após adicionar e validar o arquivo "requirements.txt", instale as dependências:
 
 pip install -r requirements.txt
 
