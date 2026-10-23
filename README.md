@@ -1,135 +1,260 @@
 # OTDR Analyzer
 
-Sistema web de análise de eventos em fibra óptica desenvolvido com Python e Flask
+### Sistema Web de Análise de Eventos em Fibra Óptica
 
-Projeto autoral de desenvolvimento backend | Python • Flask • SQLite • Telecomunicações
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-Framework-black?logo=flask)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite)
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 
-## Sobre o projeto
+> Projeto autoral desenvolvido com Python e Flask, aplicando conhecimentos de desenvolvimento backend à análise de eventos em redes de fibra óptica.
 
-O OTDR Analyzer é uma aplicação web criada para auxiliar na interpretação de eventos registrados em medições de fibra óptica.
+## 📌 Sobre o Projeto
 
-O projeto surgiu da experiência prática com infraestrutura de telecomunicações e da oportunidade de aplicar conhecimentos de desenvolvimento de software à análise de dados técnicos.
+O **OTDR Analyzer** é uma aplicação web desenvolvida para auxiliar na análise de eventos identificados em medições de fibra óptica.
 
-A aplicação permite importar arquivos CSV com eventos OTDR, avaliar perdas ópticas com base em limites configuráveis, identificar possíveis anomalias e consultar análises anteriores.
+O projeto surgiu da combinação entre minha formação em **Análise e Desenvolvimento de Sistemas** e minha experiência profissional como técnico de fibra óptica.
 
-Status: em desenvolvimento, utilizando dados simulados para demonstração.
+A aplicação permite importar arquivos CSV contendo eventos OTDR, analisar perdas ópticas, identificar possíveis anomalias e armazenar históricos de análises.
 
-## Problema abordado
+O objetivo é demonstrar como o desenvolvimento de software pode contribuir para a organização e interpretação de dados técnicos em telecomunicações.
 
-A análise de medições ópticas exige a interpretação de eventos como emendas, conectores, perdas e reflexões.
+**Status:** Em desenvolvimento, utilizando dados simulados para demonstração.
 
-O OTDR Analyzer busca organizar parte desse processo, aplicando regras de análise aos dados importados e apresentando os resultados em uma interface web.
+---
 
-## Funcionalidades
+## 🎯 Problema Abordado
 
-- Importação de arquivos CSV contendo eventos de medições OTDR.
-- Identificação e classificação de eventos ópticos.
-- Avaliação de perdas com limites configuráveis.
-- Apresentação de resultados e possíveis problemas.
-- Cadastro, login e confirmação de contas.
-- Armazenamento de histórico de análises por usuário.
-- Controle de permissões administrativas.
-- Mecanismo de bloqueio progressivo de tentativas de login.
+A interpretação de medições OTDR envolve a avaliação de eventos como:
 
-## Tecnologias
+- Emendas ópticas;
+- Conectores;
+- Perdas de sinal;
+- Reflexões;
+- Eventos com atenuação acima dos limites definidos.
 
-Tecnologia| Aplicação
-Python| Processamento e regras de negócio
-Flask| Aplicação web e rotas
-SQLite| Persistência de dados
-Werkzeug| Hash e verificação de senhas
-HTML/CSS| Interface web
-Git/GitHub| Versionamento
+O OTDR Analyzer busca automatizar parte desse processo, utilizando regras de análise aplicadas aos dados importados.
 
-## Arquitetura
+---
 
-O projeto organiza suas responsabilidades em módulos:
+## 🚀 Funcionalidades
 
-- "app.py": rotas e integração da aplicação Flask.
-- "analisador.py": processamento e avaliação dos eventos.
-- "autenticacao.py": autenticação de usuários.
-- "banco.py": persistência de dados.
-- "limite_login.py": controle de tentativas de acesso.
-- "admin.py": recursos administrativos.
-- "conta.py": gerenciamento de contas.
-- "emails.py": envio de mensagens.
-- "validacao.py": validação de dados.
-- "config.py": configurações da aplicação.
+- [x] Importação de eventos OTDR por arquivos CSV;
+- [x] Identificação e classificação de eventos;
+- [x] Análise de perdas ópticas;
+- [x] Limites configuráveis de avaliação;
+- [x] Histórico de análises por usuário;
+- [x] Cadastro e autenticação de usuários;
+- [x] Controle de permissões administrativas;
+- [x] Controle de tentativas de login;
+- [ ] Testes automatizados abrangentes;
+- [ ] Leitura direta de arquivos binários `.SOR`;
+- [ ] Preparação e validação para produção.
 
-As interfaces HTML estão em "templates/", com recursos estáticos em "static/".
+> **Nota:** A versão atual utiliza dados estruturados em CSV. A leitura direta de arquivos `.SOR` ainda não está implementada.
 
-## Formato dos dados
+---
 
-A versão atual utiliza arquivos CSV com os campos:
+## 🛠️ Tecnologias Utilizadas
 
-Campo| Descrição
-"distancia_km"| Distância do evento
-"tipo"| Tipo de evento
-"perda_db"| Perda óptica
-"reflectancia_db"| Reflectância
+| Tecnologia | Finalidade |
+|------------|------------|
+| Python | Linguagem principal e regras de negócio |
+| Flask | Desenvolvimento da aplicação web |
+| SQLite | Armazenamento e persistência de dados |
+| Werkzeug | Hash e verificação de senhas |
+| HTML | Estrutura das páginas |
+| CSS | Estilização da interface |
+| Git | Controle de versão |
+| GitHub | Hospedagem e documentação do código |
 
-Limitação atual: a aplicação não interpreta diretamente arquivos binários ".SOR".
+---
 
-## Instalação e execução
+## 🏗️ Estrutura do Projeto
 
-Clone o repositório:
+```text
+otdr-analyzer/
+├── app.py
+├── analisador.py
+├── autenticacao.py
+├── banco.py
+├── limite_login.py
+├── admin.py
+├── conta.py
+├── emails.py
+├── validacao.py
+├── config.py
+├── templates/
+├── static/
+└── README.md
+```
 
-git clone
-https://github.com/e-tezzon/otdr-analyzer.git
+### Responsabilidade dos Módulos
+
+| Arquivo | Responsabilidade |
+|---------|------------------|
+| `app.py` | Rotas e integração da aplicação Flask |
+| `analisador.py` | Processamento e análise dos eventos |
+| `autenticacao.py` | Autenticação dos usuários |
+| `banco.py` | Persistência dos dados |
+| `limite_login.py` | Controle de tentativas de login |
+| `admin.py` | Funcionalidades administrativas |
+| `conta.py` | Gerenciamento de contas |
+| `emails.py` | Recursos de envio de e-mails |
+| `validacao.py` | Validação de dados |
+| `config.py` | Configurações da aplicação |
+
+---
+
+## 📊 Formato dos Dados
+
+A aplicação utiliza arquivos CSV contendo eventos de medições OTDR.
+
+### Exemplo de entrada
+
+```csv
+distancia_km,tipo,perda_db,reflectancia_db
+0.50,emenda,0.10,-55
+1.20,conector,0.35,-40
+2.40,emenda,0.15,-52
+3.80,conector,0.60,-35
+```
+
+**Campos utilizados:**
+
+| Campo | Descrição |
+|-------|-----------|
+| `distancia_km` | Distância do evento em quilômetros |
+| `tipo` | Classificação do evento |
+| `perda_db` | Perda óptica em decibéis |
+| `reflectancia_db` | Reflectância do evento em decibéis |
+
+> Os dados acima são fictícios e ilustrativos. O formato deve ser validado conforme as regras do analisador.
+
+---
+
+## ⚙️ Instalação e Execução
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/e-tezzon/otdr-analyzer.git
 cd otdr-analyzer
+```
 
-### Crie um ambiente virtual:
+### 2. Criar ambiente virtual
 
+```bash
 python -m venv .venv
+```
 
-## Ative o ambiente:
+### 3. Ativar o ambiente virtual
 
-### Windows:
+**Windows:**
 
+```powershell
 .venv\Scripts\activate
+```
 
-### Linux/macOS:
+**Linux/macOS:**
 
+```bash
 source .venv/bin/activate
+```
 
-### Após adicionar e validar o arquivo "requirements.txt", instale as dependências:
+### 4. Instalar dependências
 
+Após criar e validar o arquivo `requirements.txt`:
+
+```bash
 pip install -r requirements.txt
+```
 
-Configure as variáveis de ambiente necessárias conforme "config.py", incluindo as credenciais de e-mail quando utilizadas.
+### 5. Configurar o ambiente
 
-## Execute localmente:
+Verifique as configurações necessárias em `config.py` e defina as variáveis de ambiente exigidas pela aplicação.
 
+Não publique senhas, tokens, chaves secretas ou credenciais de e-mail.
+
+### 6. Executar a aplicação
+
+```bash
 python app.py
+```
 
-Acesse "http://127.0.0.1:5000".
+Se a aplicação utilizar a configuração padrão de desenvolvimento do Flask, acesse:
 
-Importante: não publique arquivos ".env", credenciais ou dados sensíveis no repositório.
+```text
+http://127.0.0.1:5000
+```
 
-## Segurança
+> As instruções de execução devem ser confirmadas no ambiente local antes de considerar a instalação reproduzível.
 
-O projeto documenta mecanismos de autenticação, armazenamento de hashes de senhas, controle de acesso e bloqueio progressivo de login.
+---
 
-A aplicação ainda requer validação de segurança antes de qualquer implantação pública, incluindo revisão de sessões, cookies, CSRF, HTTPS e configurações de produção.
+## 🔐 Segurança
 
-## Próximas melhorias
+O projeto contempla recursos relacionados a:
 
-- Testes automatizados das regras de análise.
-- Padronização das dependências e da configuração.
-- Melhor tratamento de arquivos inválidos.
-- Demonstração visual do fluxo completo.
-- Avaliação de suporte futuro ao formato ".SOR".
+- Autenticação de usuários;
+- Armazenamento de hashes de senhas;
+- Controle de permissões;
+- Gerenciamento de sessões;
+- Limitação de tentativas de login.
 
-## Motivação e aprendizado
+**Importante:** Esses recursos não representam uma auditoria de segurança concluída.
 
-Este projeto conecta minha formação em Análise e Desenvolvimento de Sistemas com minha experiência profissional em infraestrutura de fibra óptica.
+Antes de disponibilizar a aplicação em produção, é necessário revisar configurações, proteção CSRF, cookies, HTTPS, validação de entradas e tratamento de erros.
 
-Seu desenvolvimento envolve organização de código Python, lógica de negócio, persistência, autenticação, desenvolvimento web e tratamento de dados técnicos.
+---
 
-Autor
+## 📈 Melhorias Planejadas
 
-Eduardo Tezzon
+- [ ] Ampliar a cobertura de testes com pytest;
+- [ ] Padronizar dependências em `requirements.txt`;
+- [ ] Aprimorar o tratamento de erros;
+- [ ] Documentar o processo de configuração;
+- [ ] Adicionar capturas reais da interface;
+- [ ] Criar demonstração do funcionamento;
+- [ ] Avaliar suporte ao formato `.SOR`;
+- [ ] Preparar um ambiente seguro de implantação.
 
-Formado em Análise e Desenvolvimento de Sistemas, com foco em Python e experiência profissional em telecomunicações.
+---
 
-"GitHub — e-tezzon" (https://github.com/e-tezzon)
+## 💡 Motivação e Aprendizado
+
+O OTDR Analyzer foi desenvolvido para conectar duas áreas da minha trajetória profissional:
+
+**Desenvolvimento de software e telecomunicações.**
+
+Durante o projeto, trabalhei com:
+
+- Programação Python;
+- Desenvolvimento backend com Flask;
+- Organização modular de código;
+- Processamento de dados;
+- Persistência em banco de dados;
+- Autenticação e controle de acesso;
+- Regras de negócio aplicadas a um problema técnico.
+
+O projeto faz parte da construção do meu portfólio profissional para oportunidades em **desenvolvimento Python, backend e automação de processos**.
+
+---
+
+## 👨‍💻 Autor
+
+**Eduardo Tezzon**
+
+Formado em Análise e Desenvolvimento de Sistemas — dezembro de 2024.
+
+Desenvolvedor Python com experiência profissional em telecomunicações.
+
+**GitHub:** [github.com/e-tezzon](https://github.com/e-tezzon)
+
+**Repositório:** [OTDR Analyzer](https://github.com/e-tezzon/otdr-analyzer)
+
+---
+
+## 📄 Licença
+
+Consulte as informações de licenciamento do repositório. Na ausência de um arquivo `LICENSE`, não presuma que o código esteja autorizado para reutilização por terceiros.
