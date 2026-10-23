@@ -4,7 +4,7 @@ Sistema web de análise de eventos em fibra óptica desenvolvido com Python e Fl
 
 Projeto autoral de desenvolvimento backend | Python • Flask • SQLite • Telecomunicações
 
-Sobre o projeto
+# Sobre o projeto
 
 O OTDR Analyzer é uma aplicação web criada para auxiliar na interpretação de eventos registrados em medições de fibra óptica.
 
@@ -14,13 +14,13 @@ A aplicação permite importar arquivos CSV com eventos OTDR, avaliar perdas óp
 
 Status: em desenvolvimento, utilizando dados simulados para demonstração.
 
-Problema abordado
+# Problema abordado
 
 A análise de medições ópticas exige a interpretação de eventos como emendas, conectores, perdas e reflexões.
 
 O OTDR Analyzer busca organizar parte desse processo, aplicando regras de análise aos dados importados e apresentando os resultados em uma interface web.
 
-Funcionalidades
+# Funcionalidades
 
 - Importação de arquivos CSV contendo eventos de medições OTDR.
 - Identificação e classificação de eventos ópticos.
@@ -31,7 +31,7 @@ Funcionalidades
 - Controle de permissões administrativas.
 - Mecanismo de bloqueio progressivo de tentativas de login.
 
-Tecnologias
+# Tecnologias
 
 Tecnologia| Aplicação
 Python| Processamento e regras de negócio
@@ -41,7 +41,7 @@ Werkzeug| Hash e verificação de senhas
 HTML/CSS| Interface web
 Git/GitHub| Versionamento
 
-Arquitetura
+# Arquitetura
 
 O projeto organiza suas responsabilidades em módulos:
 
@@ -58,7 +58,7 @@ O projeto organiza suas responsabilidades em módulos:
 
 As interfaces HTML estão em "templates/", com recursos estáticos em "static/".
 
-Formato dos dados
+# Formato dos dados
 
 A versão atual utiliza arquivos CSV com os campos:
 
@@ -70,7 +70,7 @@ Campo| Descrição
 
 Limitação atual: a aplicação não interpreta diretamente arquivos binários ".SOR".
 
-Instalação e execução
+## Instalação e execução
 
 Clone o repositório:
 
@@ -97,7 +97,7 @@ pip install -r requirements.txt
 
 Configure as variáveis de ambiente necessárias conforme "config.py", incluindo as credenciais de e-mail quando utilizadas.
 
-Execute localmente:
+# Execute localmente:
 
 python app.py
 
@@ -105,13 +105,13 @@ Acesse "http://127.0.0.1:5000".
 
 Importante: não publique arquivos ".env", credenciais ou dados sensíveis no repositório.
 
-Segurança
+# Segurança
 
 O projeto documenta mecanismos de autenticação, armazenamento de hashes de senhas, controle de acesso e bloqueio progressivo de login.
 
 A aplicação ainda requer validação de segurança antes de qualquer implantação pública, incluindo revisão de sessões, cookies, CSRF, HTTPS e configurações de produção.
 
-Próximas melhorias
+# Próximas melhorias
 
 - Testes automatizados das regras de análise.
 - Padronização das dependências e da configuração.
@@ -119,7 +119,7 @@ Próximas melhorias
 - Demonstração visual do fluxo completo.
 - Avaliação de suporte futuro ao formato ".SOR".
 
-Motivação e aprendizado
+# Motivação e aprendizado
 
 Este projeto conecta minha formação em Análise e Desenvolvimento de Sistemas com minha experiência profissional em infraestrutura de fibra óptica.
 
